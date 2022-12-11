@@ -4,8 +4,8 @@ const eventNames = require('./constants');
 let register;
 
 const events = {
-  INSTREAM_ERROR: new client.Gauge({
-    name: eventNames.INSTREAM_ERROR,
+  INSTREAM_AP_PLAYER_AD_ERROR: new client.Gauge({
+    name: eventNames.INSTREAM_AP_PLAYER_AD_ERROR,
     help: 'THIS IS TESTING',
     labelNames: ['siteId'],
   }),
@@ -15,7 +15,7 @@ const registerEvents = () => {
   register = new client.Registry();
 
   //register events
-  register.registerMetric(events[eventNames.INSTREAM_ERROR]);
+  register.registerMetric(events[eventNames.INSTREAM_AP_PLAYER_AD_ERROR]);
 
   client.collectDefaultMetrics({ register });
 };

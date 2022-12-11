@@ -1,4 +1,4 @@
 const eventNames = {
-  INSTREAM_ERROR: 'INSTREAM_ERROR',
+  INSTREAM_AP_PLAYER_AD_ERROR: 'INSTREAM_AP_PLAYER_AD_ERROR',
 };
 module.exports = eventNames;
