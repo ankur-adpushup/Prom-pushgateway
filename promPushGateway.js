@@ -59,6 +59,7 @@ app.post('/log', (req, res) => {
   }
 });
 
+//Error handler
 app.use((err, req, res, next) => {
   res.status(500).send(err.message);
   console.log('THE ERROR IS : ', err);
