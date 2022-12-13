@@ -32,20 +32,30 @@ app.get('/metrics', async (req, res) => {
 
 app.post('/log', (req, res) => {
   try {
-    let { eventName, eventData } = req.body;
+    // let { eventName, eventData } = req.body;
+    const data = req.body;
 
-    //event not registered!
-    if (!events[eventName]) {
-      registerEvent(eventName);
-    }
+    //data is empty
+    if (JSON.stringify(data) === '{}')
+      return res.status(500).send('No data sent!!');
 
-    //Update metrics
-    eventData.forEach((data) => {
-      const { siteId, value } = data;
-      updateMetric(eventName, siteId, value);
+    const eventNames = Object.keys(data);
+
+    eventNames.forEach((eventName) => {
+      //event not registered!
+      if (!events[eventName]) {
+        registerEvent(eventName);
+      }
+
+      eventData = data[eventName];
+      eventData.forEach((metricData) => {
+        const { siteId, value } = metricData;
+        updateMetric(eventName, siteId, value);
+      });
+      console.log(`${eventName} metric updated`);
     });
-    console.log('Event Metrics updated!');
-    return res.status(200).send('Data updated!');
+
+    return res.status(200).send('Data updated! ');
   } catch (err) {
     console.log(err);
     return res.status(500).send('Oops Error occured!');
