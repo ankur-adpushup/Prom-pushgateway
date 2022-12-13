@@ -1,7 +1,7 @@
 const client = require('prom-client');
 
 let register = new client.Registry();
-const events = {};
+let events = {};
 
 const getNewEvent = (eventName, labelNames) => {
   return new client.Gauge({
@@ -24,14 +24,27 @@ const getMetrics = async () => {
 };
 
 const updateMetric = (eventName, siteId, value) => {
-  if (events[eventName]) {
+  if (events && events[eventName] && events[eventName].set) {
     events[eventName].set({ siteId }, Number(value));
   } else {
     console.log('Event Metric not present!');
   }
 };
 
+const clearEventMetrics = (eventNames) => {
+  eventNames.forEach((eventName) => {
+    if (register && events && events[eventName]) {
+      delete events[eventName];
+      register.removeSingleMetric(eventName);
+    }
+  });
+};
+
 const getContentType = () => {
+  if (!register) {
+    console.log("register was'nt found!");
+    return;
+  }
   return register.contentType;
 };
 
@@ -43,4 +56,5 @@ module.exports = {
   getMetrics,
   registerEvent,
   updateMetric,
+  clearEventMetrics,
 };

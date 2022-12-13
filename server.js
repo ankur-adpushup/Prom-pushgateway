@@ -6,6 +6,7 @@ const {
   getMetrics,
   registerEvent,
   updateMetric,
+  clearEventMetrics,
 } = require('./events');
 
 const app = express();
@@ -59,6 +60,28 @@ app.post('/log', (req, res) => {
   } catch (err) {
     console.log(err);
     return res.status(500).send('Oops Error occured!');
+  }
+});
+
+app.delete('/clear-events', (req, res) => {
+  try {
+    const { eventNames } = req.body;
+
+    if (!Array.isArray(eventNames))
+      return res.status(500).send('Need eventNames which must be an array!');
+
+    if (eventNames.length === 0)
+      return res.status(500).send('No eventNames found!');
+
+    clearEventMetrics(eventNames);
+
+    console.log('Metrics cleared! : ', eventNames);
+
+    return res.status(200).send('All Metrics cleared!');
+  } catch (err) {
+    console.log('Error is : ', err);
+
+    return res.status(500).send('Oops and error occured!');
   }
 });
 
