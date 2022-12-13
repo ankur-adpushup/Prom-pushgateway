@@ -10,6 +10,8 @@ const {
 
 const app = express();
 
+require('dotenv').config();
+
 app.use(express.json());
 app.use(cors());
 
@@ -19,8 +21,13 @@ app.get('/test', (req, res) => {
 
 //exposing metrics endpoint
 app.get('/metrics', async (req, res) => {
-  res.setHeader('Content-type', getContentType());
-  res.end(await getMetrics());
+  try {
+    res.setHeader('Content-type', getContentType());
+    return res.end(await getMetrics());
+  } catch (err) {
+    console.log('THE ERROR IS : ', err);
+    return res.status(500).send('Oops Error occured!');
+  }
 });
 
 app.post('/log', (req, res) => {
@@ -37,7 +44,7 @@ app.post('/log', (req, res) => {
       const { siteId, value } = data;
       updateMetric(eventName, siteId, value);
     });
-
+    console.log('Event Metrics updated!');
     return res.status(200).send('Data updated!');
   } catch (err) {
     console.log(err);
