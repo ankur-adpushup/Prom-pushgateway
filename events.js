@@ -1,24 +1,46 @@
 const client = require('prom-client');
-const eventNames = require('./constants');
 
-let register;
+let register = new client.Registry();
+const events = {};
 
-const events = {
-  INSTREAM_AP_PLAYER_AD_ERROR: new client.Gauge({
-    name: eventNames.INSTREAM_AP_PLAYER_AD_ERROR,
-    help: 'THIS IS TESTING',
-    labelNames: ['siteId'],
-  }),
+const getNewEvent = (eventName, labelNames) => {
+  return new client.Gauge({
+    name: eventName,
+    help: eventName,
+    labelNames: labelNames,
+  });
 };
 
-const registerEvents = () => {
-  register = new client.Registry();
-
-  //register events
-  register.registerMetric(events[eventNames.INSTREAM_AP_PLAYER_AD_ERROR]);
-
-  client.collectDefaultMetrics({ register });
+const registerEvent = (eventName) => {
+  if (register && eventName && !events[eventName]) {
+    events[eventName] = getNewEvent(eventName, ['siteId']);
+    register.registerMetric(events[eventName]);
+    console.log(`${eventName} custom metric registered!`);
+  }
 };
-registerEvents();
 
-module.exports = { events, register };
+const getMetrics = async () => {
+  return await register.metrics();
+};
+
+const updateMetric = (eventName, siteId, value) => {
+  if (events[eventName]) {
+    events[eventName].set({ siteId }, Number(value));
+  } else {
+    console.log('Event Metric not present!');
+  }
+};
+
+const getContentType = () => {
+  return register.contentType;
+};
+
+// client.collectDefaultMetrics({ register });
+
+module.exports = {
+  events,
+  getContentType,
+  getMetrics,
+  registerEvent,
+  updateMetric,
+};
