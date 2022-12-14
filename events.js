@@ -31,13 +31,8 @@ const updateMetric = (eventName, siteId, value) => {
   }
 };
 
-const clearEventMetrics = (eventNames) => {
-  eventNames.forEach((eventName) => {
-    if (register && events && events[eventName]) {
-      delete events[eventName];
-      register.removeSingleMetric(eventName);
-    }
-  });
+const resetAllEventMetrics = () => {
+  if (register && register.resetMetrics) register.resetMetrics();
 };
 
 const getContentType = () => {
@@ -56,5 +51,5 @@ module.exports = {
   getMetrics,
   registerEvent,
   updateMetric,
-  clearEventMetrics,
+  resetAllEventMetrics,
 };
